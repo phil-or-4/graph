@@ -1,3 +1,19 @@
+/*
+Author: Phillip Sopt
+Description:
+Graph implemenation class, all the functions are declared and defined in the Graph.h. 
+Hashtable is used for looking up vertices. Each vertex and a list of incoming and outgoing edges.
+Each edge has a weight and a vetex_id which depending of whether it's an incomeing or outgoing edge will be the 
+vertex id of the vertex on the other side of that edge.
+Functions include:
+extract_path
+dag_critical_paths
+dag_num_paths
+valid_topo_order
+enum_paths
+More details are commented above each function.
+
+*/
 
 #include <iostream>
 #include <vector>
