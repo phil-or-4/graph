@@ -8,14 +8,14 @@
 #include <fstream>
 
 using std::string;
-using std::vector;
 using std::unordered_map;
 using std::unordered_set;
+using std::vector;
 
 #define UNDISCOVERED 'u'
-#define DISCOVERED   'd'
-#define ACTIVE       'a'
-#define FINISHED     'f'
+#define DISCOVERED 'd'
+#define ACTIVE 'a'
+#define FINISHED 'f'
 
 /*
  * function:  pvec
@@ -28,13 +28,15 @@ using std::unordered_set;
  *     cout << var_of_type_T
  */
 template <typename T>
-void pvec(const std::vector<T> & vec) {
+void pvec(const std::vector<T> &vec)
+{
 
-  for(const T &x : vec) {
-    std::cout << x << "\n";;
+  for (const T &x : vec)
+  {
+    std::cout << x << "\n";
+    ;
   }
 }
-
 
 /*
  * class:  graph
@@ -42,141 +44,135 @@ void pvec(const std::vector<T> & vec) {
  * desc:   class for representing directed graphs.  Uses the
  *   adjacency list representation.
  */
-class graph {
+class graph
+{
 
-  private:
-
-    // note:  this struct does not store both
-    //   vertices in the edge -- just one.  This
-    //   is because of the overall structure of
-    //   the adjacency list organization:  an
-    //   edge struct is stored in a vector associated
-    //   with the other vertex.
-    struct edge {
-      int vertex_id;
-      double weight;
-      edge ( int vtx_id=0, double _weight=1.0) 
-        : vertex_id { vtx_id}, weight { _weight} 
-      { }
-    };
-
-    struct vertex {
-      int id;
-      vector<edge> outgoing;
-      vector<edge> incoming;
-      string name;
-
-      vertex ( int _id=0, string _name="") 
-        : id { _id }, name { _name } 
-      { }
-    };
-
-    unordered_map<string, int> _name2id;
-    unordered_set<string> edges;
-    vector<vertex> vertices;
-
-  public:
-
-    // this struct is used for capturing the results of an operation.
-    // typically a "report" will be a vector of vertex_labels indexed
-    // by vertex-id.
-    struct vertex_label {
-      double dist;
-      int pred;
-      char state;
-      int npaths;
-      
-      vertex_label( double _dist=0.0, int _pred=-1, char _state='?',
-          int _npaths=0) 
-        : dist { _dist }, pred { _pred }, state { _state}, npaths { 0 }
-      { }
-
-    };
-
-
-    graph() {}
-
-    ~graph() {}
-
-	//TODO Remove testing function when turning in
-
-	void reset()
-	{
-		vertices.clear();
-		_name2id.clear();
-		edges.clear();
-	}
-
-	bool t_confirm_num_paths(vector<int> rpt)
-	{
-		for (int i = 0; i < rpt.size(); i++)
-		{
-			
-
-		}
-
-	}
-
-	bool t_confirm_path(vector<int> path, int dest)
-	{
-		vertex* p = &vertices[0];
-		for (int i = 0; i < path.size()-1; i++)
-		{
-			if (t_vec_contains(p->outgoing, path[i + 1]))
-			{
-				p = &vertices[path[i + 1]];
-				continue;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	bool t_confirm_path_num(vector<int> path, int dest, int count)
-	{
-		int newCount = 0;
-		vertex* p = &vertices[0];
-		for (int i = 0; i < path.size()-1; i++)
-		{
-			if (t_vec_contains(p->outgoing, path[i + 1]))
-			{
-				p = &vertices[path[i + 1]];
-				newCount++;
-				continue;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		if (count == newCount)
-			return true;
-		else
-			return false;
-	}
-
-	bool t_vec_contains(vector<edge> vec, int con)
-	{
-		for (int i = 0; i < vec.size(); i++)
-		{
-			if (vec[i].vertex_id == con)return true;
-		}
-		return false;
-	}
-
-  private:
-
-    int add_vertex(const string &name) {
-      int id = vertices.size();
-        vertices.push_back(vertex(id, name));
-        _name2id[name] = id;
-        return id;
+private:
+  // note:  this struct does not store both
+  //   vertices in the edge -- just one.  This
+  //   is because of the overall structure of
+  //   the adjacency list organization:  an
+  //   edge struct is stored in a vector associated
+  //   with the other vertex.
+  struct edge
+  {
+    int vertex_id;
+    double weight;
+    edge(int vtx_id = 0, double _weight = 1.0)
+        : vertex_id{vtx_id}, weight{_weight}
+    {
     }
+  };
 
-    /*
+  struct vertex
+  {
+    int id;
+    vector<edge> outgoing;
+    vector<edge> incoming;
+    string name;
+
+    vertex(int _id = 0, string _name = "")
+        : id{_id}, name{_name}
+    {
+    }
+  };
+
+  unordered_map<string, int> _name2id;
+  unordered_set<string> edges;
+  vector<vertex> vertices;
+
+public:
+  // this struct is used for capturing the results of an operation.
+  // typically a "report" will be a vector of vertex_labels indexed
+  // by vertex-id.
+  struct vertex_label
+  {
+    double dist;
+    int pred;
+    char state;
+    int npaths;
+
+    vertex_label(double _dist = 0.0, int _pred = -1, char _state = '?',
+                 int _npaths = 0)
+        : dist{_dist}, pred{_pred}, state{_state}, npaths{0}
+    {
+    }
+  };
+
+  graph() {}
+
+  ~graph() {}
+
+  //testing functions
+
+  void reset()
+  {
+    vertices.clear();
+    _name2id.clear();
+    edges.clear();
+  }
+
+  bool t_confirm_path(vector<int> path, int dest)
+  {
+    vertex *p = &vertices[0];
+    for (int i = 0; i < path.size() - 1; i++)
+    {
+      if (t_vec_contains(p->outgoing, path[i + 1]))
+      {
+        p = &vertices[path[i + 1]];
+        continue;
+      }
+      else
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool t_confirm_path_num(vector<int> path, int dest, int count)
+  {
+    int newCount = 0;
+    vertex *p = &vertices[0];
+    for (int i = 0; i < path.size() - 1; i++)
+    {
+      if (t_vec_contains(p->outgoing, path[i + 1]))
+      {
+        p = &vertices[path[i + 1]];
+        newCount++;
+        continue;
+      }
+      else
+      {
+        return false;
+      }
+    }
+    if (count == newCount)
+      return true;
+    else
+      return false;
+  }
+
+  bool t_vec_contains(vector<edge> vec, int con)
+  {
+    for (int i = 0; i < vec.size(); i++)
+    {
+      if (vec[i].vertex_id == con)
+        return true;
+    }
+    return false;
+  }
+
+private:
+  int add_vertex(const string &name)
+  {
+    int id = vertices.size();
+    vertices.push_back(vertex(id, name));
+    _name2id[name] = id;
+    return id;
+  }
+
+  /*
      * function:  edge_string
      *
      * returns concatenation of src and dest vertex strings with
@@ -187,24 +183,23 @@ class graph {
      * quickly detect if an edge has already been created.
      *
      */
-    static
-    string edge_string(const string &src, const string &dest) {
-      return src + " " + dest;
-    }
+  static string edge_string(const string &src, const string &dest)
+  {
+    return src + " " + dest;
+  }
 
-
-    /*
+  /*
      * function: p_edge
      * desc:  simple function for printing an edge
      */
-    void p_edge(edge &e) {
-      std::cout << "(" << id2name(e.vertex_id) 
-        << ", " << e.weight << ") ";
-    }
+  void p_edge(edge &e)
+  {
+    std::cout << "(" << id2name(e.vertex_id)
+              << ", " << e.weight << ") ";
+  }
 
-  public:
-
-    /*
+public:
+  /*
      * func:  id2name
      * desc:  returns vertex name (a string) associated with given 
      *         vertex id.
@@ -212,24 +207,26 @@ class graph {
      *         If id not valid for given graph, the string "$NONE$"
      *         is returned.
      */
-    string  id2name(int id) {
-      if(id<0 || id>=vertices.size())
-        return "$NONE$";
-      return vertices[id].name;
-    }
+  string id2name(int id)
+  {
+    if (id < 0 || id >= vertices.size())
+      return "$NONE$";
+    return vertices[id].name;
+  }
 
-    /*
+  /*
      * func: name2id
      * desc: returns integer vertex id of given vertex name.
      *       If there is no such vertex in the graph, -1 is returned.
      */
-    int name2id(const string &vtx_name) {
-      if(_name2id.count(vtx_name)==0)
-        return -1;
-      return _name2id[vtx_name];
-    }
+  int name2id(const string &vtx_name)
+  {
+    if (_name2id.count(vtx_name) == 0)
+      return -1;
+    return _name2id[vtx_name];
+  }
 
-    /*
+  /*
      * func: name_vec2string
      * desc: utility function - if you have a bunch of
      *   vertex names (as strings) stored in a vector, this
@@ -239,21 +236,23 @@ class graph {
      *   Might be handy for things like getting an easy to
      *   print representation of a path for example.
      */
-    string name_vec2string(const vector<string> &vec) {
-      string s = "";
-      int i;
+  string name_vec2string(const vector<string> &vec)
+  {
+    string s = "";
+    int i;
 
-      if(vec.size()==0)
-        return s;
-
-      s = s + vec[0];
-      for(i = 1; i<vec.size(); i++) {
-        s = s + " " + vec[i];
-      }
+    if (vec.size() == 0)
       return s;
-    }
 
-    /*
+    s = s + vec[0];
+    for (i = 1; i < vec.size(); i++)
+    {
+      s = s + " " + vec[i];
+    }
+    return s;
+  }
+
+  /*
      * func: id_vec2string
      * desc: utility function - if you have a bunch of
      *   vertex ids (ints) stored in a vector, this
@@ -263,24 +262,23 @@ class graph {
      *   Might be handy for things like getting an easy to
      *   print representation of a path for example.
      */
-    string id_vec2string(const vector<int> &vec) {
-      string s = "";
-      int i;
+  string id_vec2string(const vector<int> &vec)
+  {
+    string s = "";
+    int i;
 
-      if(vec.size()==0)
-        return s;
-
-      s = s + id2name(vec[0]);
-      for(i = 1; i<vec.size(); i++) {
-        s = s + " " + id2name(vec[i]);
-      }
+    if (vec.size() == 0)
       return s;
+
+    s = s + id2name(vec[0]);
+    for (i = 1; i < vec.size(); i++)
+    {
+      s = s + " " + id2name(vec[i]);
     }
+    return s;
+  }
 
-
-
-
-    /*
+  /*
      * func: add_edge
      * desc: adds edge (src,dest) with given weight to graph if
      *   possible.
@@ -293,41 +291,42 @@ class graph {
      *       Note:  if src and/or dest are not currently vertices
      *         in the graph, they will be added.
      */
-    bool add_edge(const string &src, const string &dest, 
-        double weight=1.0) {
+  bool add_edge(const string &src, const string &dest,
+                double weight = 1.0)
+  {
 
-      int s_id, d_id;
+    int s_id, d_id;
 
-      string estring = edge_string(src, dest);
+    string estring = edge_string(src, dest);
 
-      if(edges.count(estring)==1) {
-        std::cerr << "warning: duplicate edge '"
-          << estring << "'\n";
-        return false;
-      }
-
-      edges.insert(estring);
-
-      // get id for source vertex
-      if(_name2id.count(src)==0) 
-        s_id = add_vertex(src);
-      else
-        s_id = _name2id[src];
-
-      // get id for destination vertex
-      if(_name2id.count(dest)==0) 
-        d_id = add_vertex(dest);
-      else
-        d_id = _name2id[dest];
-
-      vertices[s_id].outgoing.push_back(edge(d_id, weight));
-      vertices[d_id].incoming.push_back(edge(s_id, weight));
-
-      return true;
+    if (edges.count(estring) == 1)
+    {
+      std::cerr << "warning: duplicate edge '"
+                << estring << "'\n";
+      return false;
     }
 
+    edges.insert(estring);
 
-    /*
+    // get id for source vertex
+    if (_name2id.count(src) == 0)
+      s_id = add_vertex(src);
+    else
+      s_id = _name2id[src];
+
+    // get id for destination vertex
+    if (_name2id.count(dest) == 0)
+      d_id = add_vertex(dest);
+    else
+      d_id = _name2id[dest];
+
+    vertices[s_id].outgoing.push_back(edge(d_id, weight));
+    vertices[d_id].incoming.push_back(edge(s_id, weight));
+
+    return true;
+  }
+
+  /*
      * func: add_edge(string &)
      * desc: takes an edge specification as a single string, 
      *   parses the string into src vertex, dest vertex and
@@ -346,115 +345,130 @@ class graph {
      *   If it has three tokens, the third token must be parseable as
      *   a double.
      */
-    bool add_edge(const string &str) {
-      std::stringstream ss(str);
-      string src, dest, junk, weight_str;
-      double weight;
+  bool add_edge(const string &str)
+  {
+    std::stringstream ss(str);
+    string src, dest, junk, weight_str;
+    double weight;
 
-      if(!(ss >> src))
+    if (!(ss >> src))
+      return false;
+    if (!(ss >> dest))
+      return false;
+    if (!(ss >> weight_str))
+    {
+      // only two tokens: use default weight
+      weight = 1.0;
+    }
+    else
+    {
+      if (!(std::stringstream(weight_str) >> weight))
+      {
+        // couldn't parse weight
         return false;
-      if(!(ss >> dest))
+      }
+
+      if (ss >> junk)
+      {
+        // extra token?  format error
         return false;
-      if(!(ss >> weight_str)){
-        // only two tokens: use default weight
-        weight = 1.0;
-      }
-      else {
-        if(!(std::stringstream(weight_str) >> weight)){
-          // couldn't parse weight
-          return false;
-        }
-
-        if(ss >> junk){
-          // extra token?  format error
-          return false;
-        }
-      }
-
-      add_edge(src, dest, weight);
-
-      return true;
-    }
-
-    void _add_edge(const string &str) {
-
-      if(!add_edge(str))
-        std::cout << "add_edge failed; str='" <<
-          str << "'\n";
-    }
-
-    void display(){
-      int u;
-
-      for(u=0; u<vertices.size(); u++) {
-        std::cout << vertices[u].name << " : ";
-
-        for(edge &e : vertices[u].outgoing) 
-          p_edge(e);
-        std::cout << "\n";
       }
     }
 
-    /*
+    add_edge(src, dest, weight);
+
+    return true;
+  }
+
+  void _add_edge(const string &str)
+  {
+
+    if (!add_edge(str))
+      std::cout << "add_edge failed; str='" << str << "'\n";
+  }
+
+  void display()
+  {
+    int u;
+
+    for (u = 0; u < vertices.size(); u++)
+    {
+      std::cout << vertices[u].name << " : ";
+
+      for (edge &e : vertices[u].outgoing)
+        p_edge(e);
+      std::cout << "\n";
+    }
+  }
+
+  /*
      * func: ids2names
      * desc: utility function which takes a vector of vertex IDs
      *   and populates another vector of strings with the corresponding
      *   vertex names.
      */
-    void ids2names(std::vector<int> &  ids, std::vector<string> & names) {
-      names.clear();
+  void ids2names(std::vector<int> &ids, std::vector<string> &names)
+  {
+    names.clear();
 
-      for(int &u : ids) {
-        names.push_back(id2name(u));
-      }
+    for (int &u : ids)
+    {
+      names.push_back(id2name(u));
     }
+  }
 
-    /* 
+  /* 
      * func: read_file
      * desc:
      */
-    bool read_file(const string &fname) {
-      std::ifstream file;
-      string line;
+  bool read_file(const string &fname)
+  {
+    std::ifstream file;
+    string line;
 
-      file.open(fname, std::ios::in);
-      if(!file.is_open())
-        return false;
-      
-      while(getline(file, line)) {
-        // skip blank lines
-        if(line.length() > 0) {
-          if(!add_edge(line)) {
-            std::cerr << "warning: skipped input line '" 
-              << line << "' (ill-formatted)\n";
-          }
+    file.open(fname, std::ios::in);
+    if (!file.is_open())
+      return false;
+
+    while (getline(file, line))
+    {
+      // skip blank lines
+      if (line.length() > 0)
+      {
+        if (!add_edge(line))
+        {
+          std::cerr << "warning: skipped input line '"
+                    << line << "' (ill-formatted)\n";
         }
       }
-      file.close();
-      return true;
     }
+    file.close();
+    return true;
+  }
 
+  int num_nodes()
+  {
+    return vertices.size();
+  }
+  int num_edges()
+  {
+    return edges.size();
+  }
 
-    int num_nodes() {
-      return vertices.size();
+private:
+  void init_report(std::vector<vertex_label> &report)
+  {
+    int u;
+
+    report.clear();
+    for (u = 0; u < vertices.size(); u++)
+    {
+      report.push_back(vertex_label(-1, -1, UNDISCOVERED));
     }
-    int num_edges() {
-      return edges.size();
-    }
+  }
 
-  private:
-    void init_report(std::vector<vertex_label> & report) {
-      int u;
-
-      report.clear();
-      for(u=0; u<vertices.size(); u++) {
-        report.push_back(vertex_label(-1, -1, UNDISCOVERED));
-      }
-    }
-
-
-  public:
-    /*
+public:
+  /*
      * TODO 10 points
      *
      * modify bfs so that vertex labels reflect the NUMBER OF 
@@ -472,194 +486,207 @@ class graph {
      *
      * RUNTIME:  bfs must still be O(V+E).
      *
-     */   
-	  bool bfs(int src, std::vector<vertex_label> &report)
-	  {
-		  int u, v;
-		  std::queue<int> q;
+     */
+  bool bfs(int src, std::vector<vertex_label> &report)
+  {
+    int u, v;
+    std::queue<int> q;
 
-		  if (src < 0 || src >= num_nodes())
-			  return false;
-
-		  init_report(report);
-
-		  report[src].dist = 0;
-		  report[src].npaths = 1;
-
-		  // since src is the root of the bfs tree, it has no 
-		  // predecessor.
-		  // By convention, we set the predecessor to itself.
-		  report[src].pred = src;
-		  report[src].state = DISCOVERED;
-		  q.push(src);
-
-		  while (!q.empty())
-		  {
-			  // dequeue front node from queue
-			  u = q.front();
-			  q.pop();
-
-			  // examine outgoing edges of u
-			  for (edge &e : vertices[u].outgoing)
-			  {
-				  v = e.vertex_id;
-				  string tU = id2name(u);
-				  string tV = id2name(v);
-				  if (report[v].state == UNDISCOVERED)
-				  {
-					  report[v].npaths = report[u].npaths;				//v.npaths = u.npaths
-					  report[v].dist = report[u].dist + 1;
-					  report[v].pred = u;
-					  report[v].state = DISCOVERED;
-					  // enqueue newly discovered vertex
-					  q.push(v);
-				  }
-				  else
-				  {
-					  //if we have a better path pass that path on
-					  if (report[u].dist < report[v].dist - 1)
-					  {
-						  report[v].dist = report[u].dist + 1;
-						  if (report[u].npaths < report[v].npaths)
-						  {
-							  report[v].npaths = report[u].npaths;
-						  }
-					  }
-
-					  if (report[u].dist == report[v].dist - 1)	//if we find another short path:w
-					  {
-						  report[v].npaths++;
-					  }
-				  }
-			  }
-		  }
-		  return true;
-	  }
-
-    bool bfs(const string src, std::vector<vertex_label> &report) {
-      int u;
-
-      if((u=name2id(src)) == -1)
-          return false;
-      bfs(u, report);
-      return true;
-    }
-
-  private:
-    void _dfs(int u, vector<vertex_label> & rpt, bool &cycle) {
-      int v;
-
-      rpt[u].state = ACTIVE;
-      for(edge &e : vertices[u].outgoing) {
-        v = e.vertex_id;
-        if(rpt[v].state == UNDISCOVERED) {
-          rpt[v].pred = u;
-          rpt[v].dist = rpt[u].dist + 1;
-          _dfs(v, rpt, cycle);
-        }
-        if(rpt[v].state == ACTIVE) 
-          cycle = true;
-      }
-      rpt[u].state = FINISHED;
-    }
-
-  public:
-    bool dfs(int u, vector<vertex_label> & rpt, bool &cycle) {
-
-      if(u < 0 || u >= num_nodes()) 
-        return false;
-
-      cycle = false;
-
-      init_report(rpt);
-      rpt[u].pred = u;
-      rpt[u].dist = 0;
-      _dfs(u, rpt, cycle);
-      return true;
-    }
-
-    bool dfs(const string &src, vector<vertex_label> & rpt, bool &cycle) {
-      int u;
-
-      if((u=name2id(src)) == -1)
-          return false;
-      dfs(u, rpt, cycle);
-      return true;
-    }
-
-    bool has_cycle() {
-      int u;
-      bool cycle=false;
-      vector<vertex_label> rpt;
-
-      init_report(rpt);
-      for(u=0; u<num_nodes(); u++) {
-        if(rpt[u].state == UNDISCOVERED) {
-          _dfs(u, rpt, cycle);
-          if(cycle)
-            return true;
-        }
-      }
+    if (src < 0 || src >= num_nodes())
       return false;
-    }
 
-    bool topo_sort(std::vector<int> &order) {
-      std::queue<int> q;
-      std::vector<int> indegrees;
-      int u, v;
-      int indeg;
+    init_report(report);
 
-      order.clear();
-      if(has_cycle())
-        return false;
+    report[src].dist = 0;
+    report[src].npaths = 1;
 
-      for(u=0; u<num_nodes(); u++) {
-        indeg = vertices[u].incoming.size();
+    // since src is the root of the bfs tree, it has no
+    // predecessor.
+    // By convention, we set the predecessor to itself.
+    report[src].pred = src;
+    report[src].state = DISCOVERED;
+    q.push(src);
 
-        indegrees.push_back(indeg);
-        if(indeg==0)
-          q.push(u);
-      }
+    while (!q.empty())
+    {
+      // dequeue front node from queue
+      u = q.front();
+      q.pop();
 
-      while(!q.empty()){
-        u = q.front();
-        q.pop();
-        order.push_back(u);
-        for(edge &e : vertices[u].outgoing) {
-          v = e.vertex_id;
-          indegrees[v]--;
-          if(indegrees[v]==0) 
-            q.push(v);
+      // examine outgoing edges of u
+      for (edge &e : vertices[u].outgoing)
+      {
+        v = e.vertex_id;
+        string tU = id2name(u);
+        string tV = id2name(v);
+        if (report[v].state == UNDISCOVERED)
+        {
+          report[v].npaths = report[u].npaths; //v.npaths = u.npaths
+          report[v].dist = report[u].dist + 1;
+          report[v].pred = u;
+          report[v].state = DISCOVERED;
+          // enqueue newly discovered vertex
+          q.push(v);
         }
-      }
-      return true;
-    }
+        else
+        {
+          //if we have a better path, pass that path on
+          if (report[u].dist < report[v].dist - 1)
+          {
+            report[v].dist = report[u].dist + 1;     //reset the dist of v becuase a better path was found
+            if (report[u].npaths < report[v].npaths) //if our npaths were less then
+            {
+              report[v].npaths = report[u].npaths; //reset the npaths of v too
+            }
+          }
 
-
-
-    void disp_report(const vector<vertex_label> & rpt, 
-        bool print_paths=false) {
-      int u;
-      vector<int> path;
-
-      if(rpt.size() != num_nodes()) {
-          std::cerr << "error - disp_report(): report vector has incorrect length\n";
-          return;
-        }
-
-        for(u=0; u<num_nodes(); u++) {
-          std::cout << id2name(u) << " : dist=" <<  rpt[u].dist
-            << " ; pred=" <<  id2name(rpt[u].pred) << 
-            " ; state='" << rpt[u].state << "'; npaths=" << 
-            rpt[u].npaths << "\n";
-          if(print_paths) {
-            extract_path(rpt, u, path);
-            std::cout << "     PATH: <" + id_vec2string(path) + ">\n";
+          if (report[u].dist == report[v].dist - 1) //if we find another short path to this vertex
+          {
+            report[v].npaths++; //increment the # of short paths found
           }
         }
+      }
+    }
+    return true;
+  }
+
+  bool bfs(const string src, std::vector<vertex_label> &report)
+  {
+    int u;
+
+    if ((u = name2id(src)) == -1)
+      return false;
+    bfs(u, report);
+    return true;
+  }
+
+private:
+  void _dfs(int u, vector<vertex_label> &rpt, bool &cycle)
+  {
+    int v;
+
+    rpt[u].state = ACTIVE;
+    for (edge &e : vertices[u].outgoing)
+    {
+      v = e.vertex_id;
+      if (rpt[v].state == UNDISCOVERED)
+      {
+        rpt[v].pred = u;
+        rpt[v].dist = rpt[u].dist + 1;
+        _dfs(v, rpt, cycle);
+      }
+      if (rpt[v].state == ACTIVE)
+        cycle = true;
+    }
+    rpt[u].state = FINISHED;
+  }
+
+public:
+  bool dfs(int u, vector<vertex_label> &rpt, bool &cycle)
+  {
+
+    if (u < 0 || u >= num_nodes())
+      return false;
+
+    cycle = false;
+
+    init_report(rpt);
+    rpt[u].pred = u;
+    rpt[u].dist = 0;
+    _dfs(u, rpt, cycle);
+    return true;
+  }
+
+  bool dfs(const string &src, vector<vertex_label> &rpt, bool &cycle)
+  {
+    int u;
+
+    if ((u = name2id(src)) == -1)
+      return false;
+    dfs(u, rpt, cycle);
+    return true;
+  }
+
+  bool has_cycle()
+  {
+    int u;
+    bool cycle = false;
+    vector<vertex_label> rpt;
+
+    init_report(rpt);
+    for (u = 0; u < num_nodes(); u++)
+    {
+      if (rpt[u].state == UNDISCOVERED)
+      {
+        _dfs(u, rpt, cycle);
+        if (cycle)
+          return true;
+      }
+    }
+    return false;
+  }
+
+  bool topo_sort(std::vector<int> &order)
+  {
+    std::queue<int> q;
+    std::vector<int> indegrees;
+    int u, v;
+    int indeg;
+
+    order.clear();
+    if (has_cycle())
+      return false;
+
+    for (u = 0; u < num_nodes(); u++)
+    {
+      indeg = vertices[u].incoming.size();
+
+      indegrees.push_back(indeg);
+      if (indeg == 0)
+        q.push(u);
     }
 
-    /******************************************************
+    while (!q.empty())
+    {
+      u = q.front();
+      q.pop();
+      order.push_back(u);
+      for (edge &e : vertices[u].outgoing)
+      {
+        v = e.vertex_id;
+        indegrees[v]--;
+        if (indegrees[v] == 0)
+          q.push(v);
+      }
+    }
+    return true;
+  }
+
+  void disp_report(const vector<vertex_label> &rpt,
+                   bool print_paths = false)
+  {
+    int u;
+    vector<int> path;
+
+    if (rpt.size() != num_nodes())
+    {
+      std::cerr << "error - disp_report(): report vector has incorrect length\n";
+      return;
+    }
+
+    for (u = 0; u < num_nodes(); u++)
+    {
+      std::cout << id2name(u) << " : dist=" << rpt[u].dist
+                << " ; pred=" << id2name(rpt[u].pred) << " ; state='" << rpt[u].state << "'; npaths=" << rpt[u].npaths << "\n";
+      if (print_paths)
+      {
+        extract_path(rpt, u, path);
+        std::cout << "     PATH: <" + id_vec2string(path) + ">\n";
+      }
+    }
+  }
+
+  /******************************************************
      *
      * Vocabulary:  
      *
@@ -680,7 +707,7 @@ class graph {
      *
      */
 
-    /* TODO 20 points
+  /* TODO 20 points
      * function:  extract_path
      * desc:  extracts the path (if any) encoded by vertex labels
      *        ending at vertex dest (as an int ID).  Resulting path
@@ -728,51 +755,56 @@ class graph {
      *    the path extracted.
      *
      */
-	bool extract_path(const vector<vertex_label> & rpt, int dest, vector<int> & path)
-	{
-		path.clear();
-		if (rpt.size() != num_nodes())
-			return false;
-		if (dest > rpt.size()) return false;
+  bool extract_path(const vector<vertex_label> &rpt, int dest, vector<int> &path)
+  {
+    path.clear();
+    if (rpt.size() != num_nodes())
+      return false;
+    if (dest > rpt.size())
+      return false;
 
-		int b = rpt[0].pred;
-		for (int u = dest; u >= -1; u = rpt[u].pred)
-		{
-			if (vertices[u].incoming.size() == 0)
-			{
-				path.push_back(u);
-				break;
-			}
-			if (rpt[u].pred == -1)
-			{
-				path.clear();
-				return false;
-			}
-			path.push_back(u);
-		}
+    //we will start at the dest and work our way to a start node
+    for (int u = dest; u >= -1; u = rpt[u].pred)
+    {
+      //if we found a way to a start node from dest then we are golden, break the loop
+      if (vertices[u].incoming.size() == 0)
+      {
+        path.push_back(u);
+        break;
+      }
+      //if no path is found then bail and return false
+      if (rpt[u].pred == -1)
+      {
+        path.clear();
+        return false;
+      }
+      path.push_back(u);
+    }
 
-		reverse_vector(path);
+    //don't forget to reverse the path because we built it backwards
+    reverse_vector(path);
 
-		return true;   // placeholder
-	}
+    return true;
+  }
 
-	void reverse_vector(vector<int> &vec)
-	{
-		int j = vec.size() - 1;
-		for (int i = 0; i < vec.size(); i++)
-		{
-			if (i > j)
-			{
-				break;
-			}
-			int temp = vec[i];
-			vec[i] = vec[j];
-			vec[j] = temp;
-			j--;
-		}
-	}
+  //fairly straight forward function to reverse a vector
+  void reverse_vector(vector<int> &vec)
+  {
+    int j = vec.size() - 1;
+    for (int i = 0; i < vec.size(); i++)
+    {
+      if (i > j)
+      {
+        break;
+      }
+      int temp = vec[i];
+      vec[i] = vec[j];
+      vec[j] = temp;
+      j--;
+    }
+  }
 
-    /*
+  /*
      *  TODO 30 points
      *
      *  func: dag_critical_paths
@@ -798,44 +830,48 @@ class graph {
      *
      *  runtime:  O(V+E)
      */
-    bool dag_critical_paths(vector<vertex_label> & rpt) {
+  bool dag_critical_paths(vector<vertex_label> &rpt)
+  {
 
-		int u, v;
-		std::queue<int> q;
-		if (has_cycle()) return false;
+    int u, v;
+    std::queue<int> q;
+    if (has_cycle())
+      return false;
 
-		init_report(rpt);
-		vector<int> topo;
-		topo_sort(topo);
+    init_report(rpt);
+    vector<int> topo;
+    topo_sort(topo);
 
-		//find all the starting nodes
-		for (int i = 0; i < vertices.size(); i++)
-		{
-			if (vertices[i].incoming.size() == 0)
-			{
-				rpt[i].dist = 0;
-				rpt[i].pred = i;
-			}
-		}
+    //find all the starting nodes and setup their dist and pred according to convention
+    for (int i = 0; i < vertices.size(); i++)
+    {
+      if (vertices[i].incoming.size() == 0)
+      {
+        rpt[i].dist = 0;
+        rpt[i].pred = i;
+      }
+    }
 
-		//assuming weights are set
-		for (int i = 0; i < topo.size(); i++)
-		{
-			u = topo[i];
-			for (edge &e : vertices[u].outgoing)
-			{
-				int v = e.vertex_id;
-				if (rpt[v].dist < rpt[u].dist + e.weight)
-				{
-					rpt[v].dist = rpt[u].dist + e.weight;
-					rpt[v].pred = u;
-				}
-			}
-		}
-		return true;
-	}
-	
-    /*
+    //assuming weights are set
+    for (int i = 0; i < topo.size(); i++)
+    {
+      u = topo[i];
+      //go through each edge outgoing of u
+      for (edge &e : vertices[u].outgoing)
+      {
+        int v = e.vertex_id;
+        //if the new vertex's dist is < u's dist + the edge (u,v)'s weight
+        if (rpt[v].dist < rpt[u].dist + e.weight)
+        {
+          rpt[v].dist = rpt[u].dist + e.weight; //update the new vertex's dist
+          rpt[v].pred = u;                      //u is v's new pred
+        }
+      }
+    }
+    return true;
+  }
+
+  /*
      *  TODO 30 points
      *  function:  dag_num_paths
      *  desc:  if given graph (calling object) is a DAG, the vector
@@ -899,71 +935,65 @@ class graph {
      *   u? you multiply them
      *
      */
-	bool dag_num_paths(vector<vertex_label> & rpt)
-	{
-		int u;
-		if (has_cycle())
-			return false;
-		// your code here...
-		vector<int> topo;
-		topo_sort(topo);
-		init_report(rpt);
+  bool dag_num_paths(vector<vertex_label> &rpt)
+  {
+    int u;
+    if (has_cycle())
+      return false;
+    vector<int> topo;
+    topo_sort(topo);  //topologically sort the graph
+    init_report(rpt); //initialize the report
 
-		//set up the starting and ending vertices
-		for (int i = 0; i < vertices.size(); i++)
-		{
-			rpt[i].pred = 0;
-			if (vertices[i].incoming.size() == 0)
-			{
-				rpt[i].npaths = 1;	//inputs	/  i/o
-				rpt[i].pred = 1;	//outputs
-			}
-			else if (vertices[i].outgoing.size() == 0)
-			{
-				rpt[i].npaths = 1;
-				rpt[i].pred = 1;
-			}
-		}
+    //set up the starting and ending vertices
+    for (int i = 0; i < vertices.size(); i++)
+    {
+      rpt[i].pred = 0;
+      if (vertices[i].incoming.size() == 0 || vertices[i].outgoing.size() == 0)
+      {
+        rpt[i].npaths = 1; //inputs	/  i/o
+        rpt[i].pred = 1;   //outputs
+      }
+    }
 
-		//npaths shall be the input
-		//pred shall be the output
-		//and at the end npaths = npaths * pred
-		
-		//go through the list initally and setup the main branching nodes (nodes with a lot of i/o paths)
-		for (int i = 0; i < topo.size(); i++)
-		{
-			u = topo[i];
-			for (edge& e : vertices[u].outgoing)
-			{
-				int v = e.vertex_id;
-				if(vertices[v].outgoing.size() > 0)
-					rpt[v].npaths += rpt[u].npaths;		//set up the inputs
-			}
-		}
+    //npaths shall be the # of input paths
+    //pred shall be the # of output paths
+    //and at the end npaths = npaths * pred which will give us # of i/o paths
 
-		//go through the list back wards and  set up the pred (outputs)
-		for (int i = topo.size()-1; i >= 0; i--)
-		{
-			u = topo[i];
-			for (edge& e : vertices[u].incoming)
-			{
-				int v = e.vertex_id;
-				if(vertices[v].incoming.size() > 0)
-					rpt[v].pred += rpt[u].pred;			//set up the outputs
-			}
-		}
+    //go through the topo list initally and setup the inputs
+    for (int i = 0; i < topo.size(); i++)
+    {
+      u = topo[i];
+      for (edge &e : vertices[u].outgoing)
+      {
+        int v = e.vertex_id;
+        if (vertices[v].outgoing.size() > 0)
+          rpt[v].npaths += rpt[u].npaths; //set up the inputs
+      }
+    }
 
-		//last but not least set the npaths
-		for (int i = 0; i < topo.size(); i++)
-		{
-			u = topo[i];
-			rpt[u].npaths = rpt[u].npaths * rpt[u].pred;		//set up the inputs
-		}
+    //go through the list back wards and  set up the pred (outputs)
+    for (int i = topo.size() - 1; i >= 0; i--)
+    {
+      u = topo[i];
+      for (edge &e : vertices[u].incoming)
+      {
+        int v = e.vertex_id;
+        if (vertices[v].incoming.size() > 0)
+          rpt[v].pred += rpt[u].pred; //set up the outputs
+      }
+    }
 
-		return true;
-	}
+    //last but not least set the npaths
+    for (int i = 0; i < topo.size(); i++)
+    {
+      u = topo[i];
+      rpt[u].npaths = rpt[u].npaths * rpt[u].pred; //set up the inputs
+    }
 
-    /*
+    return true;
+  }
+
+  /*
      * TODO 20 points
      * function:  valid_topo_order
      * desc:  determines if vertex sequence in the given vector
@@ -978,37 +1008,39 @@ class graph {
      *
      * RUNTIME:  O(V+E)
      */
-    bool valid_topo_order(const vector<int> & order) {
-      if(has_cycle())
-        return false;
-	  vector<bool> vistedArr = vector<bool>(num_nodes());
-	  int size = vistedArr.size();
-	  for (int i = 0; i < size; i++)
-	  {
-		  vistedArr[i] = false;
-	  }
+  bool valid_topo_order(const vector<int> &order)
+  {
+    if (has_cycle())
+      return false;
+    vector<bool> vistedArr = vector<bool>(num_nodes()); //bool array that will keep track of what is visited
+    int size = vistedArr.size();
 
-	  for (int i = 0; i < order.size(); i++)
-	  {
-		  int u = order[i];
-		  int size = vertices[u].incoming.size();
-		  if (size > 0)			//is this not a start node
-		  {
-			  //if it isn't go through the pred's and make sure they are all visited
-			  for (int j = 0; j < size; j++)
-			  {
-				  if (vistedArr[vertices[u].incoming[j].vertex_id] == false)	//if they aren't return false;
-				  {
-					  return false;
-				  }
-			  }
-		  }
-		  vistedArr[u] = true;
-	  }
-      return true;
+    for (int i = 0; i < size; i++) //set everything to false
+    {
+      vistedArr[i] = false;
     }
 
-    /*
+    for (int i = 0; i < order.size(); i++)
+    {
+      int u = order[i];
+      int size = vertices[u].incoming.size();
+      if (size > 0) //is this not a start node
+      {
+        //if it isn't go through the pred's and make sure they are all visited
+        for (int j = 0; j < size; j++)
+        {
+          if (vistedArr[vertices[u].incoming[j].vertex_id] == false) //if they aren't return false;
+          {
+            return false;
+          }
+        }
+      }
+      vistedArr[u] = true;
+    }
+    return true;
+  }
+
+  /*
      * TODO 30 points
      *
      * function:  enum_paths
@@ -1069,35 +1101,37 @@ class graph {
      * COMMENT:  this function can be implemented with about
      *   20 lines of code.
      */
-    bool enum_paths(int target, vector<string> &paths)
+  bool enum_paths(int target, vector<string> &paths)
+  {
+    paths.clear();
+    if (has_cycle() || target < 0 || target >= num_nodes()) //bounds check
+      return false;
+
+    vector<int> topo;
+    topo_sort(topo); //topologically sort the graph
+
+    _enum_paths(target, paths, "");
+
+    return true;
+  }
+
+  //_enum_paths is a helper. It will started at the target and work it's way back up to a source node
+  void _enum_paths(int i, vector<string> &paths, string str)
+  {
+    str = id2name(i) + " " + str;         //add current node to the current path that this recursive call is at
+    if (vertices[i].incoming.size() == 0) //if at a src node
     {
-      paths.clear();
-      if (has_cycle() || target < 0 || target >= num_nodes())
-        return false;
-
-      // your code here!
-      vector<int> topo;
-      topo_sort(topo);
-
-      _enum_paths(target, paths, "");
-
-      return true;
+      paths.push_back(str); //we have a new path
+      return;
     }
-
-    void _enum_paths(int i, vector<string> & paths, string str){
-      str = id2name(i) + " " + str;
-      if(vertices[i].incoming.size() == 0)
-      {
-        paths.push_back(str);
-        return;
-      }
-      for (edge &e : vertices[i].incoming)
-      {
-        _enum_paths(e.vertex_id, paths, str);
-      }
+    for (edge &e : vertices[i].incoming)
+    {
+      _enum_paths(e.vertex_id, paths, str);
     }
+  }
 
-    /*
+  //failed attempts
+  /*
     bool enum_paths(int target, vector<string> &paths) {
       paths.clear();
       if(has_cycle() || target < 0 || target >= num_nodes())
@@ -1111,7 +1145,6 @@ class graph {
 			  _enum_paths(i, target, paths);
 		  }
 	  }
-      // your code here!
       return true;
     }
 
@@ -1134,9 +1167,7 @@ class graph {
 	}
   */
 
-
-
-    /*
+  /*
      * (DONE)
      * func: enum_paths(string, vector<string> &)
      * desc: same as enum_paths(int, vector<string> &) above except
@@ -1145,16 +1176,12 @@ class graph {
      *       Simply translates target vertex name to its integer id
      *       and calls enum_paths(int, vector<string> &) above.
      */
-    bool enum_paths(const string &target,  vector<string> &paths) {
-      int tgt;
-      if((tgt=name2id(target)) == -1)
-          return false;
+  bool enum_paths(const string &target, vector<string> &paths)
+  {
+    int tgt;
+    if ((tgt = name2id(target)) == -1)
+      return false;
 
-      return enum_paths(tgt, paths);
-    }
-    
-
-
-
+    return enum_paths(tgt, paths);
+  }
 };
-
